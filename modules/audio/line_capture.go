@@ -134,8 +134,11 @@ func (c *LineCapture) readPathLoop(ctx context.Context, out chan<- Frame) {
 
 		c.scanReader(ctx, f, out)
 		_ = f.Close()
-		lastModTime = info.ModTime()
-		lastSize = info.Size()
+		fInfo, _ := f.Stat()
+		if fInfo != nil {
+			lastModTime = fInfo.ModTime()
+			lastSize = fInfo.Size()
+		}
 
 		if !sleepWithContext(ctx, 200*time.Millisecond) {
 			return
